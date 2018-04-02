@@ -1,0 +1,30 @@
+version: '3.1'
+services :
+  db:
+    image: postgres:10-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser 
+      POSTGRES_PASSWORD: mypwd
+      POSTGRES_DB: mondrian 
+  admin:
+    image: adminer
+    restart: always
+    depends_on: 
+      - db
+    ports:
+      - 8081:8080
+  mondrian:
+    image: bi_mondrian:4.7
+    ports:
+      - 8080:8080
+    links:
+      - db
+    volumes:
+      - /config/mondrian.properties:/usr/local/tomcat/webapps/mondrian/mondrian.properties
+    restart: always
+    depends_on:
+      - db
+volumes:
+    mondrian:
